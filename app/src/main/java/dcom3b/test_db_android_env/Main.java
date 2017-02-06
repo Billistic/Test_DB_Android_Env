@@ -13,10 +13,12 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.util.List;
+
 public class Main extends AppCompatActivity {
 
     private EditText text;
-    private OperationsDb in;
+    private Db db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +27,7 @@ public class Main extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        SQLiteDatabase db = new SetupDb().GetDB();
-        in = new OperationsDb(db);
+        db = new Db(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -35,10 +36,24 @@ public class Main extends AppCompatActivity {
                 text = (EditText) findViewById(R.id.Text);
                 Snackbar.make(view, "Note added...", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                in.Insert("Notes", text.getText().toString());
+
+
+                try {
+                    db.add(text.getText().toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
                 text.setText("Enter Note...");
                 TextView list = (TextView)findViewById(R.id.List);
-                list.setText(in.GetAll("Notes"));
+
+                List<String> notes = db.getList();
+                String result = "";
+                for(int i = 0; i<notes.size();i++){
+                    result = result + "\n" + notes.get(i);
+                }
+                list.setText(result);
             }
         });
     }
