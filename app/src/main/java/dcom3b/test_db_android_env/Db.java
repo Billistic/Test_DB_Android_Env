@@ -46,7 +46,12 @@ public class Db extends SQLiteOpenHelper {
 		Cursor c = db.rawQuery(query, null);
 		if (c.moveToFirst()) {
 			do {
-				list.add(c.getString(0));
+				int i = c.getCount();
+				String result = "";
+				for(int count = 0; count < i; count++){
+					result = result + " " + c.getString(count);
+				}
+				list.add(result);
 			} while (c.moveToNext());
 		}
 		c.close();
